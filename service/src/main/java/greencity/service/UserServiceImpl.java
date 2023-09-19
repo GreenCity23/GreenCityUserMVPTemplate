@@ -163,7 +163,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO findByEmail(String email) {
         Optional<User> optionalUser = userRepo.findByEmail(email);
-        return optionalUser.isEmpty() ? null : modelMapper.map(optionalUser.get(), UserVO.class);
+        if (optionalUser.isEmpty()) throw new BadRequestException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + email);
+        return modelMapper.map(optionalUser.get(), UserVO.class);
     }
 
     /**
