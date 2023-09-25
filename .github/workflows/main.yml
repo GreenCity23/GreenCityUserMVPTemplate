@@ -33,11 +33,11 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      
+
       - name: Configure Git
         run: |
-          git config user.name "arthurmkrtchian"
-          git config user.email "mkrtchian.arthur999@gmail.com"
+          git config user.name "$(git log -1 --pretty=format:'%an')"
+          git config user.email "$(git log -1 --pretty=format:'%ae')"
 
       - name: Format code
         run: mvn formatter:format
