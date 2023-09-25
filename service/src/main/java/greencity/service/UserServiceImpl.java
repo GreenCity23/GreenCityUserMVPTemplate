@@ -73,7 +73,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO save(UserVO userVO) {
         User user = modelMapper.map(userVO, User.class);
-        return modelMapper.map(userRepo.save(user), UserVO.class);
+        try {
+            userVO = modelMapper.map(userRepo.save(user), UserVO.class);
+        } catch (Exception e) {
+            throw new BadRequestException(ErrorMessage.INVALID_USER_VO);
+        }
+        return userVO;
     }
 
     /**
@@ -342,8 +347,10 @@ public class UserServiceImpl implements UserService {
      * @author Nazar Vladyka
      */
     @Override
-    public List<EmailNotification> getEmailNotificationsStatuses() {
-        return Arrays.asList(EmailNotification.class.getEnumConstants());
+    public EmailNotification getEmailNotificationsStatuses(String email) {
+        User user =
+            userRepo.findByEmail(email).orElseThrow(() -> new WrongEmailException("User not found with " + email));
+        return user.getEmailNotification();
     }
 
     /**

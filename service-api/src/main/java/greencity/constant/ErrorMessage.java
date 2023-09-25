@@ -9,6 +9,7 @@ public final class ErrorMessage {
     public static final String IMAGE_EXISTS = "Image should be download, PNG or JPEG ";
     public static final String INVALID_URI = "The string could not be parsed as a URI reference.";
     public static final String INVALID_USER_EMAIL = "The user's email format is not valid.";
+    public static final String INVALID_USER_VO = "The user's data is not valid.";
     public static final String MALFORMED_URL = "Malformed URL. The string could not be parsed.";
     public static final String USER_CANNOT_ADD_SAME_SOCIAL_NETWORK_LINKS =
         "User cannot add the same social network links";
