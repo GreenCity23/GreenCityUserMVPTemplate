@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @param http {@link HttpSecurity}
      */
     @Override
+    @SuppressWarnings("squid:S4502")
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
             .and()
