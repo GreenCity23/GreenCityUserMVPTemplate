@@ -24,7 +24,7 @@ public class PlaceAuthorDto implements Serializable {
     private String name;
     @NotBlank
     @Email(
-            regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
-            message = ValidationConstants.INVALID_EMAIL)
+        regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+        message = ValidationConstants.INVALID_EMAIL)
     private String email;
 }

@@ -136,7 +136,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendCreatedNewsForAuthor(EcoNewsForSendEmailDto newDto) {
         String authorEmail = newDto.getAuthor().getEmail();
         userRepo.findByEmail(authorEmail)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail));
+            .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail));
 
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.ECO_NEWS_LINK, ecoNewsLink);
