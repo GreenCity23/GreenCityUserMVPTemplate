@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/email")
 @AllArgsConstructor
@@ -30,8 +32,15 @@ public class EmailController {
      * @param message - object with all necessary data for sending email
      * @author Taras Kavkalo
      */
+    @ApiOperation(value = "Send news for subscribed users")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
     @PostMapping("/addEcoNews")
-    public ResponseEntity<Object> addEcoNews(@RequestBody EcoNewsForSendEmailDto message) {
+    public ResponseEntity<Object> addEcoNews(@Valid @RequestBody EcoNewsForSendEmailDto message) {
         emailService.sendCreatedNewsForAuthor(message);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -76,6 +85,15 @@ public class EmailController {
      *                              email
      * @author Taras Kavkalo
      */
+
+    @ApiOperation(value = "Send habit notification")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
+    })
     @PostMapping("/sendHabitNotification")
     public ResponseEntity<Object> sendHabitNotification(@RequestBody SendHabitNotification sendHabitNotification) {
         emailService.sendHabitNotification(sendHabitNotification.getName(), sendHabitNotification.getEmail());
@@ -89,6 +107,14 @@ public class EmailController {
      *            sending email.
      * @author Zakhar Veremchuk
      */
+    @ApiOperation(value = "Send user violation")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
+    })
     @PostMapping("/sendUserViolation")
     public ResponseEntity<Object> sendUserViolation(@RequestBody UserViolationMailDto dto) {
         emailService.sendUserViolationEmail(dto);

@@ -164,7 +164,7 @@ public interface UserService {
      *
      * @return available {@link EmailNotification} statuses.
      */
-    List<EmailNotification> getEmailNotificationsStatuses();
+    EmailNotification getEmailNotificationsStatuses(String email);
 
     /**
      * Update last visit of user.

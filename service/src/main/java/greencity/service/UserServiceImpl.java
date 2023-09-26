@@ -2,6 +2,7 @@ package greencity.service;
 
 import greencity.constant.AppConstant;
 import greencity.constant.UpdateConstants;
+import greencity.dto.language.LanguageVO;
 import greencity.dto.ubs.UbsTableCreationDto;
 import greencity.dto.user.*;
 import greencity.entity.Language;
@@ -72,7 +73,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO save(UserVO userVO) {
         User user = modelMapper.map(userVO, User.class);
-        return modelMapper.map(userRepo.save(user), UserVO.class);
+        try {
+            userVO = modelMapper.map(userRepo.save(user), UserVO.class);
+        } catch (Exception e) {
+            throw new BadRequestException(ErrorMessage.INVALID_USER_VO);
+        }
+        return userVO;
     }
 
     /**
@@ -321,7 +327,9 @@ public class UserServiceImpl implements UserService {
         accessForUpdateUserStatus(id, email);
         UserVO userVO = findById(id);
         userVO.setUserStatus(userStatus);
+        LanguageVO languageVO = userVO.getLanguageVO();
         User map = modelMapper.map(userVO, User.class);
+        map.setLanguage(modelMapper.map(languageVO, Language.class));
         return modelMapper.map(userRepo.save(map), UserStatusDto.class);
     }
 
@@ -339,8 +347,10 @@ public class UserServiceImpl implements UserService {
      * @author Nazar Vladyka
      */
     @Override
-    public List<EmailNotification> getEmailNotificationsStatuses() {
-        return Arrays.asList(EmailNotification.class.getEnumConstants());
+    public EmailNotification getEmailNotificationsStatuses(String email) {
+        User user =
+            userRepo.findByEmail(email).orElseThrow(() -> new WrongEmailException("User not found with " + email));
+        return user.getEmailNotification();
     }
 
     /**
