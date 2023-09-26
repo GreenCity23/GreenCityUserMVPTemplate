@@ -16,7 +16,7 @@ public interface CustomSpecification<T> extends Specification<T> {
             return criteriaBuilder
                 .equal(root.get(searchCriteria.getKey()), searchCriteria.getValue());
         } catch (NumberFormatException ex) {
-            return searchCriteria.getValue().toString().trim().equals("") ? criteriaBuilder.conjunction()
+            return searchCriteria.getValue().toString().trim().isEmpty() ? criteriaBuilder.conjunction()
                 : criteriaBuilder.disjunction();
         }
     }
@@ -26,7 +26,7 @@ public interface CustomSpecification<T> extends Specification<T> {
      */
     default Predicate getStringPredicate(Root<T> root, CriteriaBuilder criteriaBuilder,
         SearchCriteria searchCriteria) {
-        return searchCriteria.getValue().toString().trim().equals("") ? criteriaBuilder.conjunction()
+        return searchCriteria.getValue().toString().trim().isEmpty() ? criteriaBuilder.conjunction()
             : criteriaBuilder.like(root.get(searchCriteria.getKey()),
                 "%" + searchCriteria.getValue() + "%");
     }
@@ -36,7 +36,7 @@ public interface CustomSpecification<T> extends Specification<T> {
      */
     default Predicate getEnumPredicate(Root<T> root, CriteriaBuilder criteriaBuilder,
         SearchCriteria searchCriteria) {
-        return searchCriteria.getValue().toString().trim().equals("") ? criteriaBuilder.conjunction()
+        return searchCriteria.getValue().toString().trim().isEmpty() ? criteriaBuilder.conjunction()
             : criteriaBuilder.equal(root.get(searchCriteria.getKey()).as(Integer.class),
                 searchCriteria.getValue());
     }
