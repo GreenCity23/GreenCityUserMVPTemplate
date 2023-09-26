@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: 'corretto' # Alternative distribution options are available.
+          distribution: 'adopt' # Alternative distribution options are available.
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
@@ -33,6 +33,24 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+      - name: Configure Git
+        run: |
+          git config user.name "$(git log -1 --pretty=format:'%an')"
+          git config user.email "$(git log -1 --pretty=format:'%ae')"
+
+      - name: Format code
+        run: mvn formatter:format
+
+      - name: Check for changes and commit
+        run: |
+          git add .
+          if git diff --cached --exit-code; then
+            echo "No changes detected after formatting. Skipping commit."
+          else
+            git commit -m "Apply code formatting"
+            git push origin dev
+          fi
 
       - name: Build and analyze
         env:

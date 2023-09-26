@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @param http {@link HttpSecurity}
      */
     @Override
+    @SuppressWarnings("squid:S4502")
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
             .and()
@@ -103,8 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/ownSecurity/signUp",
                 "/ownSecurity/signIn",
                 "/ownSecurity/updatePassword",
-                "/email/sendReport",
-                "/email/sendHabitNotification")
+                "/email/sendReport")
             .permitAll()
             .antMatchers(HttpMethod.GET,
                 USER_LINK,
@@ -134,6 +134,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/user/{userId}/habit",
                 "/ownSecurity/set-password")
             .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+            .antMatchers(HttpMethod.POST,
+                USER_LINK,
+                "/email/sendUserViolation")
+            .hasAnyRole(USER, ADMIN)
             .antMatchers(HttpMethod.PUT,
                 "/ownSecurity/changePassword",
                 "/user/profile",

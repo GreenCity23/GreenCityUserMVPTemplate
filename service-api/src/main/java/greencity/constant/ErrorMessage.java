@@ -9,6 +9,7 @@ public final class ErrorMessage {
     public static final String IMAGE_EXISTS = "Image should be download, PNG or JPEG ";
     public static final String INVALID_URI = "The string could not be parsed as a URI reference.";
     public static final String INVALID_USER_EMAIL = "The user's email format is not valid.";
+    public static final String INVALID_USER_VO = "The user's data is not valid.";
     public static final String MALFORMED_URL = "Malformed URL. The string could not be parsed.";
     public static final String USER_CANNOT_ADD_SAME_SOCIAL_NETWORK_LINKS =
         "User cannot add the same social network links";
@@ -25,6 +26,7 @@ public final class ErrorMessage {
     public static final String SELECT_CORRECT_LANGUAGE = "Select correct language: 'en', 'ua' or 'ru'";
     public static final String TOKEN_FOR_RESTORE_IS_INVALID = "Token is null or it doesn't exist.";
     public static final String LANGUAGE_NOT_FOUND_BY_ID = "The language does not exist by this id: ";
+    public static final String LANGUAGE_NOT_FOUND_BY_CODE = "The language does not exist by this code: ";
     public static final String USER_DEACTIVATION_REASON_IS_EMPTY = "The User deactivation reasons list is empty";
     public static final String USER_ALREADY_HAS_PASSWORD = "User already has password";
     public static final String LINK_IS_NO_ACTIVE = "This link is no longer active";

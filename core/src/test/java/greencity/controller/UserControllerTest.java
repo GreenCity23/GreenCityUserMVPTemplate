@@ -3,45 +3,23 @@ package greencity.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import greencity.ModelUtils;
 import greencity.TestConst;
-
-import static greencity.constant.AppConstant.AUTHORIZATION;
-
 import greencity.constant.AppConstant;
 import greencity.converters.UserArgumentResolver;
 import greencity.dto.PageableAdvancedDto;
 import greencity.dto.filter.FilterUserDto;
 import greencity.dto.language.LanguageVO;
 import greencity.dto.ubs.UbsTableCreationDto;
-import greencity.dto.user.UserManagementUpdateDto;
-import greencity.dto.user.UserManagementVO;
-import greencity.dto.user.UserManagementViewDto;
-import greencity.dto.user.UserProfileDtoRequest;
-import greencity.dto.user.UserStatusDto;
-import greencity.dto.user.UserUpdateDto;
-import greencity.dto.user.UserVO;
+import greencity.dto.user.*;
 import greencity.enums.EmailNotification;
 import greencity.enums.Role;
 import greencity.repository.UserRepo;
 import greencity.service.UserService;
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -57,13 +35,15 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+
+import static greencity.constant.AppConstant.AUTHORIZATION;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -168,10 +148,13 @@ class UserControllerTest {
 
     @Test
     void getEmailNotificationsTest() throws Exception {
-        mockMvc.perform(get(userLink + "/emailNotifications"))
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("rmgntnk@gmail.com");
+        String email = principal.getName();
+        mockMvc.perform(get(userLink + "/emailNotifications").principal(principal))
             .andExpect(status().isOk());
 
-        verify(userService).getEmailNotificationsStatuses();
+        verify(userService).getEmailNotificationsStatuses(email);
     }
 
     @Test
