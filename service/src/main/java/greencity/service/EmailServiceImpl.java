@@ -135,9 +135,9 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendCreatedNewsForAuthor(EcoNewsForSendEmailDto newDto) {
         String authorEmail = newDto.getAuthor().getEmail();
-        userRepo.findByEmail(authorEmail)
-            .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail));
-
+        if (userRepo.findByEmail(authorEmail).isEmpty()) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail);
+        }
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.ECO_NEWS_LINK, ecoNewsLink);
         model.put(EmailConstants.NEWS_RESULT, newDto);
@@ -291,12 +291,22 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendUserViolationEmail(UserViolationMailDto dto) {
+        if (!dto.getEmail().matches(AppConstant.VALIDATION_EMAIL)) {
+            throw new BadRequestException(ErrorMessage.INVALID_USER_EMAIL);
+        }
+        if (userRepo.findByEmail(dto.getEmail()).isEmpty()) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + dto.getEmail());
+        }
+        try {
+            changeLocale(dto.getLanguage());
+        } catch (IllegalStateException e) {
+            throw new BadRequestException(ErrorMessage.LANGUAGE_NOT_FOUND_BY_CODE + dto.getLanguage());
+        }
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.CLIENT_LINK, clientLink);
         model.put(EmailConstants.USER_NAME, dto.getName());
         model.put(EmailConstants.DESCRIPTION, dto.getViolationDescription());
         model.put(EmailConstants.LANGUAGE, dto.getLanguage());
-        changeLocale(dto.getLanguage());
         String template = createEmailTemplate(model, EmailConstants.USER_VIOLATION_PAGE);
         sendEmail(dto.getEmail(), EmailConstants.VIOLATION_EMAIL, template);
     }
