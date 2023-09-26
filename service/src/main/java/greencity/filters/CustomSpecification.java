@@ -32,12 +32,22 @@ public interface CustomSpecification<T> extends Specification<T> {
     }
 
     /**
-     * Used for build predicate for role and status filter.
+     * Used for build predicate for status filter.
      */
     default Predicate getEnumPredicate(Root<T> root, CriteriaBuilder criteriaBuilder,
         SearchCriteria searchCriteria) {
         return searchCriteria.getValue().toString().trim().isEmpty() ? criteriaBuilder.conjunction()
             : criteriaBuilder.equal(root.get(searchCriteria.getKey()).as(Integer.class),
+                searchCriteria.getValue());
+    }
+
+    /**
+     * Used for build predicate for role filter.
+     */
+    default Predicate getEnumStringPredicate(Root<T> root, CriteriaBuilder criteriaBuilder,
+        SearchCriteria searchCriteria) {
+        return searchCriteria.getValue().toString().trim().equals("") ? criteriaBuilder.conjunction()
+            : criteriaBuilder.equal(root.get(searchCriteria.getKey()).as(String.class),
                 searchCriteria.getValue());
     }
 }

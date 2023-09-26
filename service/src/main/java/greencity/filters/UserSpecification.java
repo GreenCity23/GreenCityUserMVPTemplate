@@ -34,7 +34,7 @@ public class UserSpecification implements CustomSpecification<User> {
             }
             if (searchCriteria.getType().equals("role")) {
                 allPredicate =
-                    criteriaBuilder.and(allPredicate, getStringPredicate(root, criteriaBuilder, searchCriteria));
+                    criteriaBuilder.and(allPredicate, getEnumStringPredicate(root, criteriaBuilder, searchCriteria));
             }
             if (searchCriteria.getType().equals("userStatus")) {
                 allPredicate =

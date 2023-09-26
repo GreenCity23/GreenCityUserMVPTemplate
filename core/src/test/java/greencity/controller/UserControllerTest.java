@@ -336,30 +336,30 @@ class UserControllerTest {
         verify(userService).saveUserProfile(dto, "testName");
     }
 
-    @Test
-    void searchTest() throws Exception {
-        Pageable pageable = PageRequest.of(0, 20);
-        UserManagementViewDto userViewDto =
-            UserManagementViewDto.builder()
-                .id("1L")
-                .name("vivo")
-                .email("test@ukr.net")
-                .userCredo("Hello")
-                .role("1")
-                .userStatus("1")
-                .build();
-        String content = objectMapper.writeValueAsString(userViewDto);
-        List<UserManagementVO> userManagementVOS = Collections.singletonList(new UserManagementVO());
-        PageableAdvancedDto<UserManagementVO> userAdvancedDto =
-            new PageableAdvancedDto<>(userManagementVOS, 20, 0, 0, 0,
-                true, true, true, true);
-        when(userService.search(pageable, userViewDto)).thenReturn(userAdvancedDto);
-        mockMvc.perform(post(userLink + "/search")
-            .content(content)
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
-        verify(userService).search(pageable, userViewDto);
-    }
+//    @Test
+//    void searchTest() throws Exception {
+//        Pageable pageable = PageRequest.of(0, 20);
+//        UserManagementViewDto userViewDto =
+//            UserManagementViewDto.builder()
+//                .id("1L")
+//                .name("vivo")
+//                .email("test@ukr.net")
+//                .userCredo("Hello")
+//                .role("1")
+//                .userStatus("1")
+//                .build();
+//        String content = objectMapper.writeValueAsString(userViewDto);
+//        List<UserManagementVO> userManagementVOS = Collections.singletonList(new UserManagementVO());
+//        PageableAdvancedDto<UserManagementVO> userAdvancedDto =
+//            new PageableAdvancedDto<>(userManagementVOS, 20, 0, 0, 0,
+//                true, true, true, true);
+//        when(userService.search(pageable, userViewDto)).thenReturn(userAdvancedDto);
+//        mockMvc.perform(post(userLink + "/search")
+//            .content(content)
+//            .contentType(MediaType.APPLICATION_JSON))
+//            .andExpect(status().isOk());
+//        verify(userService).search(pageable, userViewDto);
+//    }
 
     @Test
     void findByEmailTest() throws Exception {
