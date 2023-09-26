@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @param http {@link HttpSecurity}
      */
     @Override
+    @SuppressWarnings("squid:S4502")
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
             .and()
@@ -92,7 +93,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/ownSecurity/verifyEmail",
                 "/ownSecurity/updateAccessToken",
                 "/ownSecurity/restorePassword",
-                "/user/emailNotifications",
                 "/user/activatedUsersAmount",
                 "/user/{userId}/habit/assign",
                 "/token",
@@ -104,19 +104,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/ownSecurity/signUp",
                 "/ownSecurity/signIn",
                 "/ownSecurity/updatePassword",
-                "/email/addEcoNews",
-                "/email/sendReport",
-                "/email/sendHabitNotification")
+                "/email/sendReport")
             .permitAll()
             .antMatchers(HttpMethod.GET,
                 USER_LINK,
                 "/user/shopping-list-items/habits/{habitId}/shopping-list",
                 "/user/{userId}/{habitId}/custom-shopping-list-items/available",
                 "/user/{userId}/profile/",
-                "/user/isOnline/{userId}/",
                 "/user/{userId}/profileStatistics/",
                 "/user/userAndSixFriendsWithOnlineStatus",
                 "/user/userAndAllFriendsWithOnlineStatus",
+                "/user/emailNotifications",
                 "/user/findNotDeactivatedByEmail",
                 "/user/findByEmail",
                 "/user/findIdByEmail",
@@ -130,11 +128,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
             .antMatchers(HttpMethod.POST,
                 USER_LINK,
+                "/email/addEcoNews",
                 "/email/changePlaceStatus",
                 "/user/shopping-list-items",
                 "/user/{userId}/habit",
                 "/ownSecurity/set-password")
             .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+            .antMatchers(HttpMethod.POST,
+                USER_LINK,
+                "/email/sendUserViolation")
+            .hasAnyRole(USER, ADMIN)
             .antMatchers(HttpMethod.PUT,
                 "/ownSecurity/changePassword",
                 "/user/profile",
@@ -175,6 +178,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/user/filter",
                 "/ownSecurity/register",
                 "/email/sendHabitNotification")
+            .hasAnyRole(ADMIN)
+            .antMatchers(HttpMethod.GET,
+                "/user/isOnline/{userId}/")
             .hasAnyRole(ADMIN)
             .antMatchers(HttpMethod.PATCH,
                 "/user/status",
