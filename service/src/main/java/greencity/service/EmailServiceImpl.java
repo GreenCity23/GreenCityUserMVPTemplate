@@ -299,8 +299,8 @@ public class EmailServiceImpl implements EmailService {
         }
         try {
             changeLocale(dto.getLanguage());
-        } catch (IllegalStateException e){
-            throw new BadRequestException(ErrorMessage.LANGUAGE_NOT_FOUND_BY_CODE+dto.getLanguage());
+        } catch (IllegalStateException e) {
+            throw new BadRequestException(ErrorMessage.LANGUAGE_NOT_FOUND_BY_CODE + dto.getLanguage());
         }
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.CLIENT_LINK, clientLink);
