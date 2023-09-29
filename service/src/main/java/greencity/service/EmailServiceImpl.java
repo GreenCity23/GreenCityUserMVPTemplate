@@ -7,6 +7,7 @@ import greencity.constant.LogMessage;
 import greencity.dto.category.CategoryDto;
 import greencity.dto.econews.AddEcoNewsDtoResponse;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.event.EventForSendEmailDto;
 import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.place.PlaceNotificationDto;
@@ -151,6 +152,23 @@ public class EmailServiceImpl implements EmailService {
         }
         String template = createEmailTemplate(model, EmailConstants.NEWS_RECEIVE_EMAIL_PAGE);
         sendEmail(newDto.getAuthor().getEmail(), EmailConstants.CREATED_NEWS, template);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @author Vladyslav Siverskyi
+     */
+    @Override
+    public void sendCreatedEventEmail(EventForSendEmailDto event) {
+        String authorEmail = event.getAuthor().getEmail();
+        if (userRepo.findByEmail(authorEmail).isEmpty()) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail);
+        }
+        Map<String, Object> model = new HashMap<>();
+        model.put(EmailConstants.EVENT_RESULT, event);
+        String template = createEmailTemplate(model, EmailConstants.EVENT_RECEIVE_EMAIL_PAGE);
+        sendEmail(authorEmail, EmailConstants.CREATED_EVENT, template);
     }
 
     /**

@@ -129,6 +129,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.POST,
                 USER_LINK,
                 "/email/addEcoNews",
+                "/email/addEvent",
                 "/email/changePlaceStatus",
                 "/user/shopping-list-items",
                 "/user/{userId}/habit",

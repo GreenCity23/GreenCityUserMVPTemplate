@@ -2,6 +2,7 @@ package greencity.controller;
 
 import greencity.constant.HttpStatuses;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.event.EventForSendEmailDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.violation.UserViolationMailDto;
 import greencity.message.SendChangePlaceStatusEmailMessage;
@@ -42,6 +43,25 @@ public class EmailController {
     @PostMapping("/addEcoNews")
     public ResponseEntity<Object> addEcoNews(@Valid @RequestBody EcoNewsForSendEmailDto message) {
         emailService.sendCreatedNewsForAuthor(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Method for sending email after event was created.
+     *
+     * @param message - object with all necessary data for sending email
+     * @author Vladyslav Siverskiy
+     */
+    @ApiOperation(value = "Send email after event was created")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/addEvent")
+    public ResponseEntity<Object> addEvent(@RequestBody EventForSendEmailDto message) {
+        emailService.sendCreatedEventEmail(message);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
