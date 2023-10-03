@@ -21,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTool jwtTool;
     private final UserService userService;
     private static final String USER_LINK = "/user";
+    private HttpSecurity http;
 
     /**
      * Constructor.
@@ -218,8 +221,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      *
      * @param auth {@link AuthenticationManagerBuilder}
      */
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+
+    protected void configure(AuthenticationManagerBuilder auth, HttpSecurity http) throws Exception{
+        http
+                .authorizeRequests()
+                .antMatchers("/api/secure-resource").authenticated()
+                .antMatchers("/api/admin-resource").hasRole("ADMIN")
+                .anyRequest().permitAll()
+                .and()
+                .oauth2Login()
+                .defaultSuccessUrl("/login/oauth2/code/google")
+                .and()
+                .formLogin()
+                .defaultSuccessUrl("/")
+                .and()
+                .logout()
+                .logoutSuccessUrl("/login")
+                .and()
+                .csrf().disable();
         auth.authenticationProvider(new JwtAuthenticationProvider(jwtTool));
     }
 
@@ -251,4 +270,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
