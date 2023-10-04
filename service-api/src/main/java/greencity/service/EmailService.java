@@ -33,6 +33,11 @@ public interface EmailService {
         String notification);
 
     /**
+     * Method for sending subscribtion approval email
+     */
+    void sendSubscribtionConfirmation(String subscriberEmail, String confirmationToken);
+
+    /**
      * Method for sending news for users who subscribed for updates.
      */
     void sendNewNewsForSubscriber(List<NewsSubscriberResponseDto> subscribers,

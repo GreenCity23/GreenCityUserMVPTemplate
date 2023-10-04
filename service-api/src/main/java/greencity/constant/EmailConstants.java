@@ -10,6 +10,8 @@ public final class EmailConstants {
     public static final String VERIFY_EMAIL = "Verify your email address";
     public static final String RESTORED_PASSWORD = "Restore password";
     public static final String CONFIRM_RESTORING_PASS = "Confirm restoring password";
+
+    public static final String CONFIRM_SUBSCRIBTION_SUBJECT = "Confirm subscription";
     public static final String APPROVE_REGISTRATION_SUBJECT = "Approve your registration";
     public static final String DEACTIVATION = "Your account was deactivated";
     public static final String ACTIVATION = "Your account was activated";
@@ -20,6 +22,7 @@ public final class EmailConstants {
     public static final String VERIFY_ADDRESS = "verifyAddress";
     public static final String RESTORE_PASS = "restorePassword";
     public static final String APPROVE_REGISTRATION = "approveRegistration";
+    public static final String CONFIRM_SUBSCRIBTION = "confirmSubscription";
     public static final String PLACE_NAME = "placeName";
     public static final String STATUS = "status";
     public static final String RESULT = "result";
@@ -34,6 +37,7 @@ public final class EmailConstants {
     public static final String IS_UBS = "isUbs";
     // templates
     public static final String VERIFY_EMAIL_PAGE = "verify-email-page";
+    public static final String CONFIRM_SUBSRIPTION_PAGE = "confirm-subscribtion-page";
     public static final String RESTORE_EMAIL_PAGE = "restore-email-page";
     public static final String SUCCESS_RESTORED_PASSWORD_PAGE = "success-restored-password-page";
     public static final String USER_APPROVAL_EMAIL_PAGE = "user-approval-email-page";

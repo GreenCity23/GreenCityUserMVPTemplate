@@ -15,9 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NewsSubscriberResponseDto implements Serializable {
-    @NotBlank
     @Email(regexp = VALIDATION_EMAIL)
     private String email;
-    @NotBlank
     private String unsubscribeToken;
+    private String confirmationToken;
 }

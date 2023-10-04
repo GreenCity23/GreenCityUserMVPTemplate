@@ -2,6 +2,7 @@ package greencity.controller;
 
 import greencity.constant.HttpStatuses;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.violation.UserViolationMailDto;
 import greencity.message.SendChangePlaceStatusEmailMessage;
@@ -140,6 +141,19 @@ public class EmailController {
     public ResponseEntity<Object> sendUserNotification(@RequestBody NotificationDto notification,
         @RequestParam("email") String email) {
         emailService.sendNotificationByEmail(notification, email);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "Send confirmation email to user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN)
+    })
+    @PostMapping("/send-confirmation")
+    public ResponseEntity<Object> sendConfirmationEmail(@RequestBody NewsSubscriberResponseDto newsSubscriberResponseDto) {
+        emailService.sendSubscribtionConfirmation(newsSubscriberResponseDto.getEmail(), newsSubscriberResponseDto.getConfirmationToken());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
