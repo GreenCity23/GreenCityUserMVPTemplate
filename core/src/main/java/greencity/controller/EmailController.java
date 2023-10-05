@@ -1,6 +1,7 @@
 package greencity.controller;
 
 import greencity.constant.HttpStatuses;
+import greencity.dto.econews.AddEcoNewsDtoResponse;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
 import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
@@ -14,11 +15,16 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/email")
@@ -27,18 +33,52 @@ public class EmailController {
     @Autowired
     private final EmailService emailService;
 
+    @Value("${greencity.server}")
+    private final String greenCityServerLink;
+
     /**
      * Method for sending news for users who subscribed for updates.
      *
-     * @param message - object with all necessary data for sending email
-     * @author Taras Kavkalo
+     * @param newsDto - object with all necessary data for sending email
+     * @author Arthur Mkrtchian
      */
     @ApiOperation(value = "Send news for subscribed users")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = HttpStatuses.OK),
-        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/newsletter")
+    public ResponseEntity<Object> sendNews(@Valid @RequestBody AddEcoNewsDtoResponse newsDto) {
+        RestTemplate restTemplate = new RestTemplate();
+        String subscribersEndpoint = greenCityServerLink + "/subscribers";
+
+        ResponseEntity<List<NewsSubscriberResponseDto>> response = restTemplate.exchange(
+                subscribersEndpoint,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<NewsSubscriberResponseDto>>() {
+                }
+        );
+
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+            throw new RuntimeException("Failed to fetch subscribers");
+        }
+
+        List<NewsSubscriberResponseDto> subscribers = response.getBody();
+
+        emailService.sendNewNewsForSubscriber(subscribers, newsDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "Send news for subscribed users")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
     })
     @PostMapping("/addEcoNews")
     public ResponseEntity<Object> addEcoNews(@Valid @RequestBody EcoNewsForSendEmailDto message) {
@@ -47,7 +87,7 @@ public class EmailController {
     }
 
     /**
-     * Method for sending notification to userss who subscribed for updates about
+     * Method for sending notification to users who subscribed for updates about
      * added new places.
      *
      * @param message - object with all necessary data for sending email
@@ -56,7 +96,7 @@ public class EmailController {
     @PostMapping("/sendReport")
     public ResponseEntity<Object> sendReport(@RequestBody SendReportEmailMessage message) {
         emailService.sendAddedNewPlacesReportEmail(message.getSubscribers(), message.getCategoriesDtoWithPlacesDtoMap(),
-            message.getEmailNotification());
+                message.getEmailNotification());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -67,15 +107,15 @@ public class EmailController {
      * @author Taras Kavkalo
      */
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = HttpStatuses.OK),
-        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
     })
     @PostMapping("/changePlaceStatus")
     public ResponseEntity<Object> changePlaceStatus(@RequestBody SendChangePlaceStatusEmailMessage message) {
         emailService.sendChangePlaceStatusEmail(message.getAuthorFirstName(), message.getPlaceName(),
-            message.getPlaceStatus(), message.getAuthorEmail());
+                message.getPlaceStatus(), message.getAuthorEmail());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -89,11 +129,11 @@ public class EmailController {
 
     @ApiOperation(value = "Send habit notification")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = HttpStatuses.OK),
-        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
-        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
     })
     @PostMapping("/sendHabitNotification")
     public ResponseEntity<Object> sendHabitNotification(@RequestBody SendHabitNotification sendHabitNotification) {
@@ -110,11 +150,11 @@ public class EmailController {
      */
     @ApiOperation(value = "Send user violation")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = HttpStatuses.OK),
-        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
-        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND),
     })
     @PostMapping("/sendUserViolation")
     public ResponseEntity<Object> sendUserViolation(@RequestBody UserViolationMailDto dto) {
@@ -132,18 +172,25 @@ public class EmailController {
      */
     @ApiOperation(value = "Send notification to user via email")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = HttpStatuses.OK),
-        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN)
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 403, message = HttpStatuses.FORBIDDEN)
     })
     @PostMapping("/notification")
     public ResponseEntity<Object> sendUserNotification(@RequestBody NotificationDto notification,
-        @RequestParam("email") String email) {
+                                                       @RequestParam("email") String email) {
         emailService.sendNotificationByEmail(notification, email);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * Sends user email confirmation message.
+     *
+     * @param newsSubscriberResponseDto {@link NewsSubscriberResponseDto} - object with all necessary data
+     *                                  for sending a confirmation message to verify the email address.
+     * @author Arthur Mkrtchian
+     */
     @ApiOperation(value = "Send confirmation email to user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HttpStatuses.OK),
