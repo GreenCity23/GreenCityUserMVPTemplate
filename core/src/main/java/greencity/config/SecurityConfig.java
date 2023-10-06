@@ -25,11 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static greencity.constant.AppConstant.ADMIN;
-import static greencity.constant.AppConstant.EMPLOYEE;
-import static greencity.constant.AppConstant.MODERATOR;
-import static greencity.constant.AppConstant.UBS_EMPLOYEE;
-import static greencity.constant.AppConstant.USER;
+import static greencity.constant.AppConstant.*;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
@@ -42,9 +38,9 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String USER_LINK = "/user";
     private final JwtTool jwtTool;
     private final UserService userService;
-    private static final String USER_LINK = "/user";
 
     /**
      * Constructor.
@@ -73,130 +69,135 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("squid:S4502")
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
-            .and()
-            .csrf()
-            .disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .addFilterBefore(
-                new AccessTokenAuthenticationFilter(jwtTool, authenticationManager(), userService),
-                UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling()
-            .authenticationEntryPoint((req, resp, exc) -> resp.sendError(SC_UNAUTHORIZED, "Authorize first."))
-            .accessDeniedHandler((req, resp, exc) -> resp.sendError(SC_FORBIDDEN, "You don't have authorities."))
-            .and()
-            .authorizeRequests()
-            .antMatchers("/static/css/**",
-                "/static/img/**")
-            .permitAll()
-            .antMatchers(HttpMethod.GET,
-                "/ownSecurity/verifyEmail",
-                "/ownSecurity/updateAccessToken",
-                "/ownSecurity/restorePassword",
-                "/user/activatedUsersAmount",
-                "/user/{userId}/habit/assign",
-                "/token",
-                "/socket/**",
-                "/user/findAllByEmailNotification",
-                "/user/checkByUuid")
-            .permitAll()
-            .antMatchers(HttpMethod.POST,
-                "/ownSecurity/signUp",
-                "/ownSecurity/signIn",
-                "/ownSecurity/updatePassword",
-                "/email/sendReport")
-            .permitAll()
-            .antMatchers(HttpMethod.GET,
-                USER_LINK,
-                "/user/shopping-list-items/habits/{habitId}/shopping-list",
-                "/user/{userId}/{habitId}/custom-shopping-list-items/available",
-                "/user/{userId}/profile/",
-                "/user/{userId}/profileStatistics/",
-                "/user/userAndSixFriendsWithOnlineStatus",
-                "/user/userAndAllFriendsWithOnlineStatus",
-                "/user/emailNotifications",
-                "/user/findNotDeactivatedByEmail",
-                "/user/findByEmail",
-                "/user/findIdByEmail",
-                "/user/findById",
-                "/user/findUserByName/**",
-                "/user/findByUuId",
-                "/user/findUuidByEmail",
-                "/user/lang",
-                "/user/createUbsRecord",
-                "/ownSecurity/password-status")
-            .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.POST,
-                USER_LINK,
-                "/email/addEcoNews",
-                "/email/changePlaceStatus",
-                "/user/shopping-list-items",
-                "/user/{userId}/habit",
-                "/ownSecurity/set-password")
-            .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.POST,
-                USER_LINK,
-                "/email/sendUserViolation")
-            .hasAnyRole(USER, ADMIN)
-            .antMatchers(HttpMethod.PUT,
-                "/ownSecurity/changePassword",
-                "/user/profile",
-                "/user/{id}/updateUserLastActivityTime/{date}",
-                "/user/language/{languageId}",
-                "/user/employee-email")
-            .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.PUT,
-                "/user/edit-authorities",
-                "/user/authorities",
-                "/user/deactivate-employee")
-            .hasAnyRole(ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.GET,
-                "/user/get-all-authorities",
-                "/user/get-positions-authorities",
-                "/user/get-employee-login-positions")
-            .hasAnyRole(ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.PATCH,
-                "/user/shopping-list-items/{userShoppingListItemId}",
-                "/user/profilePicture",
-                "/user/deleteProfilePicture")
-            .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.DELETE,
-                "/user/shopping-list-items/user-shopping-list-items",
-                "/user/shopping-list-items")
-            .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.GET,
-                "/user/all",
-                "/user/roles",
-                "/user/findUserForManagement",
-                "/user/searchBy",
-                "/user/findAll")
-            .hasAnyRole(ADMIN, MODERATOR, EMPLOYEE)
-            .antMatchers(HttpMethod.POST,
-                "/ownSecurity/sign-up-employee")
-            .hasAnyRole(UBS_EMPLOYEE)
-            .antMatchers(HttpMethod.POST,
-                "/user/filter",
-                "/ownSecurity/register",
-                "/email/sendHabitNotification")
-            .hasAnyRole(ADMIN)
-            .antMatchers(HttpMethod.GET,
-                "/user/isOnline/{userId}/")
-            .hasAnyRole(ADMIN)
-            .antMatchers(HttpMethod.PATCH,
-                "/user/status",
-                "/user/role",
-                "/user/update/role")
-            .hasAnyRole(ADMIN)
-            .antMatchers(HttpMethod.POST,
-                "/management/login")
-            .not().fullyAuthenticated()
-            .antMatchers(HttpMethod.GET,
-                "/management/login")
-            .permitAll()
-            .antMatchers("/css/**",
-                "/img/**")
-            .permitAll()
-            .anyRequest().hasAnyRole(ADMIN);
+                .and()
+                .csrf()
+                .disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests()
+                .antMatchers("/email/send-confirmation").permitAll()
+                .and()
+                .addFilterBefore(
+                        new AccessTokenAuthenticationFilter(jwtTool, authenticationManager(), userService),
+                        UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint((req, resp, exc) -> resp.sendError(SC_UNAUTHORIZED, "Authorize first."))
+                .accessDeniedHandler((req, resp, exc) -> resp.sendError(SC_FORBIDDEN, "You don't have authorities."))
+                .and()
+                .authorizeRequests()
+                .antMatchers("/static/css/**",
+                        "/static/img/**")
+                .permitAll()
+                .antMatchers(HttpMethod.GET,
+                        "/ownSecurity/verifyEmail",
+                        "/ownSecurity/updateAccessToken",
+                        "/ownSecurity/restorePassword",
+                        "/user/activatedUsersAmount",
+                        "/user/{userId}/habit/assign",
+                        "/token",
+                        "/socket/**",
+                        "/user/findAllByEmailNotification",
+                        "/user/checkByUuid",
+                        "/email/send-confirmation"
+                        )
+                .permitAll()
+                .antMatchers(HttpMethod.POST,
+                        "/ownSecurity/signUp",
+                        "/ownSecurity/signIn",
+                        "/ownSecurity/updatePassword",
+                        "/email/sendReport",
+                        "/email/send-confirmation")
+                .permitAll()
+                .antMatchers(HttpMethod.GET,
+                        USER_LINK,
+                        "/user/shopping-list-items/habits/{habitId}/shopping-list",
+                        "/user/{userId}/{habitId}/custom-shopping-list-items/available",
+                        "/user/{userId}/profile/",
+                        "/user/{userId}/profileStatistics/",
+                        "/user/userAndSixFriendsWithOnlineStatus",
+                        "/user/userAndAllFriendsWithOnlineStatus",
+                        "/user/emailNotifications",
+                        "/user/findNotDeactivatedByEmail",
+                        "/user/findByEmail",
+                        "/user/findIdByEmail",
+                        "/user/findById",
+                        "/user/findUserByName/**",
+                        "/user/findByUuId",
+                        "/user/findUuidByEmail",
+                        "/user/lang",
+                        "/user/createUbsRecord",
+                        "/ownSecurity/password-status")
+                .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.POST,
+                        USER_LINK,
+                        "/email/addEcoNews",
+                        "/email/changePlaceStatus",
+                        "/user/shopping-list-items",
+                        "/user/{userId}/habit",
+                        "/ownSecurity/set-password")
+                .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.POST,
+                        USER_LINK,
+                        "/email/sendUserViolation")
+                .hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.PUT,
+                        "/ownSecurity/changePassword",
+                        "/user/profile",
+                        "/user/{id}/updateUserLastActivityTime/{date}",
+                        "/user/language/{languageId}",
+                        "/user/employee-email")
+                .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.PUT,
+                        "/user/edit-authorities",
+                        "/user/authorities",
+                        "/user/deactivate-employee")
+                .hasAnyRole(ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.GET,
+                        "/user/get-all-authorities",
+                        "/user/get-positions-authorities",
+                        "/user/get-employee-login-positions")
+                .hasAnyRole(ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.PATCH,
+                        "/user/shopping-list-items/{userShoppingListItemId}",
+                        "/user/profilePicture",
+                        "/user/deleteProfilePicture")
+                .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.DELETE,
+                        "/user/shopping-list-items/user-shopping-list-items",
+                        "/user/shopping-list-items")
+                .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.GET,
+                        "/user/all",
+                        "/user/roles",
+                        "/user/findUserForManagement",
+                        "/user/searchBy",
+                        "/user/findAll")
+                .hasAnyRole(ADMIN, MODERATOR, EMPLOYEE)
+                .antMatchers(HttpMethod.POST,
+                        "/ownSecurity/sign-up-employee")
+                .hasAnyRole(UBS_EMPLOYEE)
+                .antMatchers(HttpMethod.POST,
+                        "/user/filter",
+                        "/ownSecurity/register",
+                        "/email/sendHabitNotification")
+                .hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.GET,
+                        "/user/isOnline/{userId}/")
+                .hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PATCH,
+                        "/user/status",
+                        "/user/role",
+                        "/user/update/role")
+                .hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.POST,
+                        "/management/login")
+                .not().fullyAuthenticated()
+                .antMatchers(HttpMethod.GET,
+                        "/management/login")
+                .permitAll()
+                .antMatchers("/css/**",
+                        "/img/**")
+                .permitAll()
+                .anyRequest().hasAnyRole(ADMIN);
     }
 
     /**
@@ -242,10 +243,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Collections.singletonList("*"));
         configuration.setAllowedMethods(
-            Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+                Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
         configuration.setAllowedHeaders(
-            Arrays.asList(
-                "X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization"));
+                Arrays.asList(
+                        "X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

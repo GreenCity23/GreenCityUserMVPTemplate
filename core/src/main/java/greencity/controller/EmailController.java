@@ -13,8 +13,7 @@ import greencity.service.EmailService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -26,15 +25,18 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/email")
-@AllArgsConstructor
 public class EmailController {
-    @Autowired
     private final EmailService emailService;
 
-    @Value("${greencity.server}")
-    private final String greenCityServerLink;
+    @Value("${greencity.server.address}")
+    private String greenCityServerLink;
+
+    public EmailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     /**
      * Method for sending news for users who subscribed for updates.
@@ -200,6 +202,7 @@ public class EmailController {
     })
     @PostMapping("/send-confirmation")
     public ResponseEntity<Object> sendConfirmationEmail(@RequestBody NewsSubscriberResponseDto newsSubscriberResponseDto) {
+        log.info("send confirmation mail operation was requested!");
         emailService.sendSubscribtionConfirmation(newsSubscriberResponseDto.getEmail(), newsSubscriberResponseDto.getConfirmationToken());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
