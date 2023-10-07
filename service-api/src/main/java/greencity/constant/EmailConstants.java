@@ -29,6 +29,7 @@ public final class EmailConstants {
     public static final String UNSUBSCRIBE_LINK = "unsubscribeLink";
     public static final String NEWS_RESULT = "news";
     public static final String EVENT_RESULT = "event";
+    public static final String EVENT_COMMENT_RESULT = "event_comment";
     public static final String EVENT_COMMENT_LINK = "event-comment-link";
     public static final String REASONS = "reasons";
     public static final String DESCRIPTION = "description";
@@ -42,6 +43,7 @@ public final class EmailConstants {
     public static final String CHANGE_PLACE_STATUS_EMAIL_PAGE = "change-place-status-email-page";
     public static final String NEWS_RECEIVE_EMAIL_PAGE = "news-receive-email-page";
     public static final String EVENT_RECEIVE_EMAIL_PAGE = "event-receive-email-page";
+    public static final String EVENT_COMMENT_RECEIVE_EMAIL_PAGE = "event-comment-receive-email-page";
     public static final String NEW_PLACES_REPORT_EMAIL_PAGE = "new-places-report-email-page";
     public static final String REASONS_OF_DEACTIVATION_PAGE = "user-reasons-of-deactivation-page";
     public static final String ACTIVATION_PAGE = "user-activation-page";
