@@ -62,6 +62,13 @@ public interface EmailService {
     void sendEventCommentEmail(EventCommentForSendDto eventCommentForSendDto);
 
     /**
+     * Method for sending notification about updated event to author and attenders.
+     *
+     * @param editedDto - includes all information about event and author.
+     */
+    void sendEditedEventEmail(EventForSendEmailDto editedDto);
+
+    /**
      * Method for sending simple notification to {@code User} about change status.
      *
      * @param authorFirstName place author's first name.

@@ -130,6 +130,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 USER_LINK,
                 "/email/addEcoNews",
                 "/email/addEvent",
+                "/email/editEvent",
                 "/email/commentEvent",
                 "/email/changePlaceStatus",
                 "/user/shopping-list-items",

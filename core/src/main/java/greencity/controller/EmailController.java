@@ -86,6 +86,24 @@ public class EmailController {
     }
 
     /**
+     * Method for sending notification to users who subscribed for attending event.
+     *
+     * @param message - object with all necessary data for sending email
+     */
+    @ApiOperation(value = "Send email after event was updated")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = HttpStatuses.OK),
+            @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/editEvent")
+    public ResponseEntity<Object> editEvent(@RequestBody EventForSendEmailDto message) {
+        emailService.sendEditedEventEmail(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
      * Method for sending notification to userss who subscribed for updates about
      * added new places.
      *

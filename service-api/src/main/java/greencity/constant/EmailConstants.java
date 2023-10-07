@@ -44,6 +44,8 @@ public final class EmailConstants {
     public static final String NEWS_RECEIVE_EMAIL_PAGE = "news-receive-email-page";
     public static final String EVENT_RECEIVE_EMAIL_PAGE = "event-receive-email-page";
     public static final String EVENT_COMMENT_RECEIVE_EMAIL_PAGE = "event-comment-receive-email-page";
+    public static final String EDITED_EVENT = "Your event on GreenCity has been updated ";
+    public static final String EVENT_EDIT_EMAIL_PAGE = "event-edited-email-page";
     public static final String NEW_PLACES_REPORT_EMAIL_PAGE = "new-places-report-email-page";
     public static final String REASONS_OF_DEACTIVATION_PAGE = "user-reasons-of-deactivation-page";
     public static final String ACTIVATION_PAGE = "user-activation-page";
