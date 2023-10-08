@@ -120,7 +120,6 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void sendSubscribtionConfirmation(String subscriberEmail, String confirmationToken) {
-        log.info("Send confirmation email message was requested in service layer!");
         Map<String, Object> model = new HashMap<>();
         try {
             model.put(EmailConstants.CONFIRM_SUBSCRIBTION, serverLink + "/newsSubscriber/confirm?email="
@@ -129,7 +128,7 @@ public class EmailServiceImpl implements EmailService {
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());
         }
-        String template = createEmailTemplate(model, EmailConstants.VERIFY_EMAIL_PAGE);
+        String template = createEmailTemplate(model, EmailConstants.CONFIRM_SUBSCRIPTION_EMAIL);
         sendEmail(subscriberEmail, EmailConstants.CONFIRM_SUBSCRIBTION_SUBJECT, template);
     }
 

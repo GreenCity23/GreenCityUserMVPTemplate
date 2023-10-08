@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers("/email/send-confirmation").permitAll()
+                .antMatchers("/email/send-confirmation", "/email/addEcoNews").permitAll()
                 .and()
                 .addFilterBefore(
                         new AccessTokenAuthenticationFilter(jwtTool, authenticationManager(), userService),
@@ -96,16 +96,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/token",
                         "/socket/**",
                         "/user/findAllByEmailNotification",
-                        "/user/checkByUuid",
-                        "/email/send-confirmation"
+                        "/user/checkByUuid"
                         )
                 .permitAll()
                 .antMatchers(HttpMethod.POST,
                         "/ownSecurity/signUp",
                         "/ownSecurity/signIn",
                         "/ownSecurity/updatePassword",
-                        "/email/sendReport",
-                        "/email/send-confirmation")
+                        "/email/sendReport")
                 .permitAll()
                 .antMatchers(HttpMethod.GET,
                         USER_LINK,

@@ -37,6 +37,7 @@ public final class EmailConstants {
     public static final String IS_UBS = "isUbs";
     // templates
     public static final String VERIFY_EMAIL_PAGE = "verify-email-page";
+    public static final String CONFIRM_SUBSCRIPTION_EMAIL = "confirm-subscription";
     public static final String CONFIRM_SUBSRIPTION_PAGE = "confirm-subscribtion-page";
     public static final String RESTORE_EMAIL_PAGE = "restore-email-page";
     public static final String SUCCESS_RESTORED_PASSWORD_PAGE = "success-restored-password-page";

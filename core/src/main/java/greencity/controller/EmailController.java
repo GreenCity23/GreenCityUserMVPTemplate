@@ -44,7 +44,7 @@ public class EmailController {
      * @param newsDto - object with all necessary data for sending email
      * @author Arthur Mkrtchian
      */
-    @ApiOperation(value = "Send news for subscribed users")
+    @ApiOperation(value = "Send interesting news for subscribed users")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HttpStatuses.OK),
             @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
@@ -202,7 +202,6 @@ public class EmailController {
     })
     @PostMapping("/send-confirmation")
     public ResponseEntity<Object> sendConfirmationEmail(@RequestBody NewsSubscriberResponseDto newsSubscriberResponseDto) {
-        log.info("send confirmation mail operation was requested!");
         emailService.sendSubscribtionConfirmation(newsSubscriberResponseDto.getEmail(), newsSubscriberResponseDto.getConfirmationToken());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
