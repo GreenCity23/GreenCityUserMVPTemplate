@@ -1,7 +1,6 @@
 package greencity.controller;
 
 import greencity.constant.HttpStatuses;
-import greencity.dto.econews.AddEcoNewsDtoResponse;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
 import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
@@ -10,38 +9,33 @@ import greencity.message.SendChangePlaceStatusEmailMessage;
 import greencity.message.SendHabitNotification;
 import greencity.message.SendReportEmailMessage;
 import greencity.service.EmailService;
+import greencity.service.NewsletterService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/email")
 public class EmailController {
     private final EmailService emailService;
+    private final NewsletterService newsletterService;
 
-    @Value("${greencity.server.address}")
-    private String greenCityServerLink;
 
-    public EmailController(EmailService emailService) {
+    public EmailController(EmailService emailService, NewsletterService newsletterService) {
         this.emailService = emailService;
+        this.newsletterService = newsletterService;
     }
 
     /**
-     * Method for sending news for users who subscribed for updates.
+     * Test method for sending news for users who subscribed for updates.
      *
-     * @param newsDto - object with all necessary data for sending email
      * @author Arthur Mkrtchian
      */
     @ApiOperation(value = "Send interesting news for subscribed users")
@@ -52,27 +46,9 @@ public class EmailController {
             @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
     })
     @PostMapping("/newsletter")
-    public ResponseEntity<Object> sendNews(@Valid @RequestBody AddEcoNewsDtoResponse newsDto) {
-        RestTemplate restTemplate = new RestTemplate();
-        String subscribersEndpoint = greenCityServerLink + "/subscribers";
-
-        ResponseEntity<List<NewsSubscriberResponseDto>> response = restTemplate.exchange(
-                subscribersEndpoint,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<NewsSubscriberResponseDto>>() {
-                }
-        );
-
-        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-            throw new RuntimeException("Failed to fetch subscribers");
-        }
-
-        List<NewsSubscriberResponseDto> subscribers = response.getBody();
-
-        emailService.sendNewNewsForSubscriber(subscribers, newsDto);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<Void> sendNews() {
+        newsletterService.sendLatestNewsToSubscribers();
+        return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "Send news for subscribed users")
@@ -84,6 +60,7 @@ public class EmailController {
     })
     @PostMapping("/addEcoNews")
     public ResponseEntity<Object> addEcoNews(@Valid @RequestBody EcoNewsForSendEmailDto message) {
+        log.warn("ECONEWS ENTITY: " + message.getCreationDate());
         emailService.sendCreatedNewsForAuthor(message);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

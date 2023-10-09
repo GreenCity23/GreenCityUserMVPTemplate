@@ -5,7 +5,7 @@ import greencity.constant.EmailConstants;
 import greencity.constant.ErrorMessage;
 import greencity.constant.LogMessage;
 import greencity.dto.category.CategoryDto;
-import greencity.dto.econews.AddEcoNewsDtoResponse;
+import greencity.dto.econews.EcoNewsDto;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
 import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
@@ -42,6 +42,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
+    private static final String PARAM_USER_ID = "&user_id=";
     private final JavaMailSender javaMailSender;
     private final ITemplateEngine templateEngine;
     private final UserRepo userRepo;
@@ -50,7 +51,8 @@ public class EmailServiceImpl implements EmailService {
     private final String ecoNewsLink;
     private final String serverLink;
     private final String senderEmailAddress;
-    private static final String PARAM_USER_ID = "&user_id=";
+    @Value("${greencity.server.address}")
+    private String greenCityServerLink;
 
     /**
      * Constructor.
@@ -132,23 +134,30 @@ public class EmailServiceImpl implements EmailService {
         sendEmail(subscriberEmail, EmailConstants.CONFIRM_SUBSCRIBTION_SUBJECT, template);
     }
 
+
     @Override
-    public void sendNewNewsForSubscriber(List<NewsSubscriberResponseDto> subscribers,
-                                         AddEcoNewsDtoResponse newsDto) {
+    public void sendNewNewsForSubscriber(List<NewsSubscriberResponseDto> subscribers, List<EcoNewsDto> ecoNewsList) {
+        for (NewsSubscriberResponseDto subscriber : subscribers) {
+            sendAggregatedNewsEmailForSubscriber(subscriber, ecoNewsList);
+        }
+    }
+
+    private void sendAggregatedNewsEmailForSubscriber(NewsSubscriberResponseDto subscriber, List<EcoNewsDto> ecoNewsList) {
+        String subscriberEmail = subscriber.getEmail();
+
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.ECO_NEWS_LINK, ecoNewsLink);
-        model.put(EmailConstants.NEWS_RESULT, newsDto);
-        for (NewsSubscriberResponseDto dto : subscribers) {
-            try {
-                model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newsSubscriber/unsubscribe?email="
-                        + URLEncoder.encode(dto.getEmail(), StandardCharsets.UTF_8.toString())
-                        + "&unsubscribeToken=" + dto.getUnsubscribeToken());
-            } catch (UnsupportedEncodingException e) {
-                log.error(e.getMessage());
-            }
-            String template = createEmailTemplate(model, EmailConstants.NEWS_RECEIVE_EMAIL_PAGE);
-            sendEmail(dto.getEmail(), EmailConstants.NEWS, template);
+        model.put(EmailConstants.NEWS_RESULT, ecoNewsList);
+        try {
+            model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newSubscriber/unsubscribe?email="
+                    + URLEncoder.encode(subscriber.getEmail(), StandardCharsets.UTF_8.toString())
+                    + "&unsubscribeToken=" + subscriber.getUnsubscribeToken());
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
         }
+
+        String template = createEmailTemplate(model, EmailConstants.NEWS_RECEIVE_EMAIL_PAGE);
+        sendEmail(subscriber.getEmail(), EmailConstants.CREATED_NEWS, template);
     }
 
     @Override

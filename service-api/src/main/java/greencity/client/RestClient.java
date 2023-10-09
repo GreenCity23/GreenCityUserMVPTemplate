@@ -30,8 +30,10 @@ import static greencity.constant.AppConstant.IMAGE;
 @Component
 public class RestClient {
     private final RestTemplate restTemplate;
+
     @Value("${greencity.server.address}")
     private String greenCityServerAddress;
+
     private final HttpServletRequest httpServletRequest;
 
     /**
