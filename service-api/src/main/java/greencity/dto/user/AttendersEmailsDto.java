@@ -5,7 +5,7 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * DTO for {@link greencity.entity.User}
+ * DTO for {@link greencity.entity.User}.
  */
 @AllArgsConstructor
 @NoArgsConstructor
