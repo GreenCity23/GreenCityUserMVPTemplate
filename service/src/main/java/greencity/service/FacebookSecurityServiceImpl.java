@@ -21,8 +21,8 @@ public class FacebookSecurityServiceImpl implements FacebookSecurityService {
 
     @Autowired
     public FacebookSecurityServiceImpl(UserService userService,
-                                       JwtTool jwtTool,
-                                       ModelMapper modelMapper) {
+        JwtTool jwtTool,
+        ModelMapper modelMapper) {
         this.userService = userService;
         this.jwtTool = jwtTool;
         this.modelMapper = modelMapper;
@@ -38,8 +38,7 @@ public class FacebookSecurityServiceImpl implements FacebookSecurityService {
         params.setRedirectUri("http://localhost:8065" + "/facebookSecurity/facebook");
         params.setScope("email");
         return createFacebookConnection()
-                .getOAuthOperations()
-                .buildAuthenticateUrl(params);
+            .getOAuthOperations()
+            .buildAuthenticateUrl(params);
     }
 }
-
