@@ -2,6 +2,8 @@ package greencity.controller;
 
 import greencity.constant.HttpStatuses;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.event.EventForSendEmailDto;
+import greencity.dto.eventcomment.EventCommentForSendDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.violation.UserViolationMailDto;
 import greencity.message.SendChangePlaceStatusEmailMessage;
@@ -42,6 +44,62 @@ public class EmailController {
     @PostMapping("/addEcoNews")
     public ResponseEntity<Object> addEcoNews(@Valid @RequestBody EcoNewsForSendEmailDto message) {
         emailService.sendCreatedNewsForAuthor(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Method for sending email after event was created.
+     *
+     * @param message - object with all necessary data for sending email
+     * @author Vladyslav Siverskiy
+     */
+    @ApiOperation(value = "Send email after event was created")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/addEvent")
+    public ResponseEntity<Object> addEvent(@RequestBody EventForSendEmailDto message) {
+        emailService.sendCreatedEventEmail(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Method for sending email to organizer after event was commented.
+     *
+     * @param message - object with all necessary data for sending email
+     * @author Vladyslav Siverskiy
+     */
+    @ApiOperation(value = "Send email after event was commented")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/commentEvent")
+    public ResponseEntity<Object> commentEvent(@RequestBody EventCommentForSendDto message) {
+        emailService.sendEventCommentEmail(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Method for sending notification to users who subscribed for attending event.
+     *
+     * @param message - object with all necessary data for sending email
+     */
+    @ApiOperation(value = "Send email after event was updated")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = HttpStatuses.OK),
+        @ApiResponse(code = 400, message = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(code = 401, message = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(code = 404, message = HttpStatuses.NOT_FOUND)
+    })
+    @PostMapping("/editEvent")
+    public ResponseEntity<Object> editEvent(@RequestBody EventForSendEmailDto message) {
+        emailService.sendEditedEventEmail(message);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

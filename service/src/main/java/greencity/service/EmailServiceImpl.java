@@ -7,9 +7,12 @@ import greencity.constant.LogMessage;
 import greencity.dto.category.CategoryDto;
 import greencity.dto.econews.AddEcoNewsDtoResponse;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.event.EventForSendEmailDto;
+import greencity.dto.eventcomment.EventCommentForSendDto;
 import greencity.dto.newssubscriber.NewsSubscriberResponseDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.place.PlaceNotificationDto;
+import greencity.dto.user.AttendersEmailsDto;
 import greencity.dto.user.PlaceAuthorDto;
 import greencity.dto.user.UserActivationDto;
 import greencity.dto.user.UserDeactivationReasonDto;
@@ -33,8 +36,11 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 /**
  * {@inheritDoc}
@@ -151,6 +157,62 @@ public class EmailServiceImpl implements EmailService {
         }
         String template = createEmailTemplate(model, EmailConstants.NEWS_RECEIVE_EMAIL_PAGE);
         sendEmail(newDto.getAuthor().getEmail(), EmailConstants.CREATED_NEWS, template);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @author Vladyslav Siverskyi
+     */
+    @Override
+    public void sendCreatedEventEmail(EventForSendEmailDto event) {
+        String authorEmail = event.getAuthor().getEmail();
+        if (userRepo.findByEmail(authorEmail).isEmpty()) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail);
+        }
+        Map<String, Object> model = new HashMap<>();
+        model.put(EmailConstants.EVENT_RESULT, event);
+        String template = createEmailTemplate(model, EmailConstants.EVENT_RECEIVE_EMAIL_PAGE);
+        sendEmail(authorEmail, EmailConstants.CREATED_EVENT, template);
+    }
+
+    @Override
+    public void sendEventCommentEmail(EventCommentForSendDto eventCommentForSendDto) {
+        Long eventOrganizerId = eventCommentForSendDto.getEventAuthorDto().getId();
+        LocalDateTime commentCreationDate = eventCommentForSendDto.getEventCommentCreationDate();
+        User eventOrganizer = userRepo.findById(eventOrganizerId)
+            .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_ID + eventOrganizerId));
+        Map<String, Object> model = new HashMap<>();
+        model.put(EmailConstants.EVENT_COMMENT_RESULT, eventCommentForSendDto);
+        model.put("commentCreationDate", commentCreationDate.getDayOfMonth()
+            + " " + commentCreationDate.getMonth().toString().toLowerCase()
+            + ", " + commentCreationDate.getYear());
+        String template = createEmailTemplate(model, EmailConstants.EVENT_COMMENT_RECEIVE_EMAIL_PAGE);
+        sendEmail(eventOrganizer.getEmail(), EmailConstants.CREATED_EVENT, template);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public void sendEditedEventEmail(EventForSendEmailDto event) {
+        String authorEmail = event.getAuthor().getEmail();
+        if (userRepo.findByEmail(authorEmail).isEmpty()) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail);
+        }
+        List<String> attendersEmails = event.getAttenders().stream()
+            .map(AttendersEmailsDto::getEmail)
+            .collect(Collectors.toList());
+        attendersEmails.add(authorEmail);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(EmailConstants.EVENT_RESULT, event);
+        String template = createEmailTemplate(model, EmailConstants.EVENT_EDIT_EMAIL_PAGE);
+
+        for (String receiverEmail : attendersEmails) {
+            sendEmail(receiverEmail, EmailConstants.EDITED_EVENT, template);
+        }
     }
 
     /**

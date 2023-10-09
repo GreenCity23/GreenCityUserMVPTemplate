@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import greencity.dto.econews.EcoNewsForSendEmailDto;
+import greencity.dto.event.EventForSendEmailDto;
 import greencity.dto.notification.NotificationDto;
 import greencity.dto.violation.UserViolationMailDto;
 import greencity.message.SendChangePlaceStatusEmailMessage;
@@ -22,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -163,5 +166,22 @@ class EmailControllerTest {
 
         NotificationDto notification = new ObjectMapper().readValue(content, NotificationDto.class);
         verify(emailService).sendNotificationByEmail(notification, email);
+    }
+
+    @Test
+    void editEventNotification() throws Exception {
+        EventForSendEmailDto message = new EventForSendEmailDto();
+        message.setTitle("Updated event");
+        message.setDescription("description description description");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(message);
+
+        mockMvc.perform(post(LINK + "/editEvent")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isOk());
+
+        verify(emailService, times(1)).sendEditedEventEmail(eq(message));
     }
 }
