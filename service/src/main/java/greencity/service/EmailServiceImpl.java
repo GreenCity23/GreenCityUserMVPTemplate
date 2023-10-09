@@ -181,12 +181,12 @@ public class EmailServiceImpl implements EmailService {
         Long eventOrganizerId = eventCommentForSendDto.getEventAuthorDto().getId();
         LocalDateTime commentCreationDate = eventCommentForSendDto.getEventCommentCreationDate();
         User eventOrganizer = userRepo.findById(eventOrganizerId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_ID + eventOrganizerId));
+            .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_ID + eventOrganizerId));
         Map<String, Object> model = new HashMap<>();
         model.put(EmailConstants.EVENT_COMMENT_RESULT, eventCommentForSendDto);
         model.put("commentCreationDate", commentCreationDate.getDayOfMonth()
-                                         + " " + commentCreationDate.getMonth().toString().toLowerCase()
-                                         + ", " + commentCreationDate.getYear());
+            + " " + commentCreationDate.getMonth().toString().toLowerCase()
+            + ", " + commentCreationDate.getYear());
         String template = createEmailTemplate(model, EmailConstants.EVENT_COMMENT_RECEIVE_EMAIL_PAGE);
         sendEmail(eventOrganizer.getEmail(), EmailConstants.CREATED_EVENT, template);
     }
@@ -202,8 +202,8 @@ public class EmailServiceImpl implements EmailService {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL + authorEmail);
         }
         List<String> attendersEmails = event.getAttenders().stream()
-                .map(AttendersEmailsDto::getEmail)
-                .collect(Collectors.toList());
+            .map(AttendersEmailsDto::getEmail)
+            .collect(Collectors.toList());
         attendersEmails.add(authorEmail);
 
         Map<String, Object> model = new HashMap<>();

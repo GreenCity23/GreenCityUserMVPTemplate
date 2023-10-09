@@ -1,4 +1,5 @@
 package greencity.dto.user;
+
 import lombok.*;
 
 import java.io.Serializable;

@@ -57,7 +57,8 @@ public interface EmailService {
     /**
      * Method for sending notification about commented event to organizer.
      *
-     * @param eventCommentForSendDto - includes all information about event and comment.
+     * @param eventCommentForSendDto - includes all information about event and
+     *                               comment.
      */
     void sendEventCommentEmail(EventCommentForSendDto eventCommentForSendDto);
 

@@ -178,9 +178,9 @@ class EmailControllerTest {
         String content = objectMapper.writeValueAsString(message);
 
         mockMvc.perform(post(LINK + "/editEvent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isOk());
 
         verify(emailService, times(1)).sendEditedEventEmail(eq(message));
     }

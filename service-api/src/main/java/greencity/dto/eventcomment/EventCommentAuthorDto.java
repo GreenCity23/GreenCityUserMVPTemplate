@@ -3,6 +3,7 @@ package greencity.dto.eventcomment;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
+
 @Getter
 @Setter
 @NoArgsConstructor
