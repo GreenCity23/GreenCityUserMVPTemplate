@@ -124,7 +124,7 @@
                 <tr>
                     <td align="center" valign="top" width="600">
             <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                     <td class="site-clr" align="center" valign="top" style="margin-top: 20px">
                         <!--/*@thymesVar id="clientLink" type="java.lang.String"*/-->
@@ -152,21 +152,18 @@
             <![endif]-->
             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                 <!-- start copy -->
-                <tr>
+                <tr th:each="newsItem : ${news}">
                     <td class="background-msg-clr" align="left"
                         style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px;">
-                        <div th:each="news : ${NEWS_RESULT}">
-                            <h3>
-                                <span th:text="${news.creationDate.toLocalDate().toString()}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 8px;"></span>
-                                <br>
-                                <span th:text="${news.title}"></span>
-                            </h3>
-                            <br>
-                            <span th:text="${news.shortInfo}"></span>
-                            <br>
-                            <a th:href="${ecoNewsLink}" class="gCity-link">Read more</a>
-                            <br><br> <!-- Separator between news -->
-                        </div>
+                        <h3 style="margin-top: 16px; margin-bottom: 16px;">
+                            <span th:text="${newsItem.creationDate.toLocalDate().toString()}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 8px;"></span>
+                            <img th:src="${newsItem.getImagePath()}" alt="News Image" style="max-width: 580px; display: block; margin: auto;">
+                            <span th:text="${newsItem.title}"></span>
+                        </h3>
+                        <span th:text="${newsItem.shortInfo}"></span>
+                        <br>
+                        <a th:href="@{${clientLink + '#/news/' + newsItem.id}}" class="gCity-link">Read more</a>
+                        <br><!-- Separator between news -->
                     </td>
                 </tr>
                 <tr>
@@ -203,7 +200,7 @@
                         <p style="margin: 0;">
                             You received this email because you subscribed for notifications about news via e-mail.
                             If you didn't request this action you can unsubscribe from next news clicking on this
-                            <span th:href="${unsubscribeLink}" class="gCity-link">LINK</span>
+                            <a th:href="${unsubscribeLink}" class="gCity-link">LINK</a>
                             or copy this link (<span style="margin: 0;" th:text="${unsubscribeLink}">
                 </span>) on browser.
                         </p>

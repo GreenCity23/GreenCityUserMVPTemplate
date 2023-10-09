@@ -1,9 +1,6 @@
 package greencity.dto.econews;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EcoNewsDto {
     private Long id;
     private ZonedDateTime creationDate;
@@ -24,6 +22,7 @@ public class EcoNewsDto {
     private List<Long> tagIds;
     private Set<Long> usersLikedNewsIds;
     private Set<Long> usersDislikedNewsIds;
+
 }
 
 

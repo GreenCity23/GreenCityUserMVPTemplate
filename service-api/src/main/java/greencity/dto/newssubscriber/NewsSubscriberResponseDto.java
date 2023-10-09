@@ -4,16 +4,17 @@ import static greencity.constant.AppConstant.VALIDATION_EMAIL;
 
 import java.io.Serializable;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Accessors(chain = true)
 public class NewsSubscriberResponseDto implements Serializable {
     Long id;
     @Email(regexp = VALIDATION_EMAIL)

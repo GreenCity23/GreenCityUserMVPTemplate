@@ -143,21 +143,19 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendAggregatedNewsEmailForSubscriber(NewsSubscriberResponseDto subscriber, List<EcoNewsDto> ecoNewsList) {
-        String subscriberEmail = subscriber.getEmail();
-
         Map<String, Object> model = new HashMap<>();
-        model.put(EmailConstants.ECO_NEWS_LINK, ecoNewsLink);
+        model.put(EmailConstants.CLIENT_LINK, clientLink);
         model.put(EmailConstants.NEWS_RESULT, ecoNewsList);
         try {
-            model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newSubscriber/unsubscribe?email="
+            model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newsSubscriber/unsubscribe?email="
                     + URLEncoder.encode(subscriber.getEmail(), StandardCharsets.UTF_8.toString())
                     + "&unsubscribeToken=" + subscriber.getUnsubscribeToken());
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());
         }
 
-        String template = createEmailTemplate(model, EmailConstants.NEWS_RECEIVE_EMAIL_PAGE);
-        sendEmail(subscriber.getEmail(), EmailConstants.CREATED_NEWS, template);
+        String template = createEmailTemplate(model, EmailConstants.NEW_NEWS_EMAIL_PAGE);
+        sendEmail(subscriber.getEmail(), EmailConstants.NEWS, template);
     }
 
     @Override
@@ -171,7 +169,7 @@ public class EmailServiceImpl implements EmailService {
         model.put(EmailConstants.ECO_NEWS_LINK, ecoNewsLink);
         model.put(EmailConstants.NEWS_RESULT, newDto);
         try {
-            model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newSubscriber/unsubscribe?email="
+            model.put(EmailConstants.UNSUBSCRIBE_LINK, serverLink + "/newsSubscriber/unsubscribe?email="
                     + URLEncoder.encode(newDto.getAuthor().getEmail(), StandardCharsets.UTF_8.toString())
                     + "&unsubscribeToken=" + newDto.getUnsubscribeToken());
         } catch (UnsupportedEncodingException e) {
