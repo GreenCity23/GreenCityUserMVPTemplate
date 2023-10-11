@@ -8,13 +8,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
+/**
+ * @author Arthur Mkrtchian
+ */
 @Repository
 public interface EcoNewsRepo extends JpaRepository<EcoNews, Long>, JpaSpecificationExecutor<EcoNews> {
     @Query(nativeQuery = true, value =
             "SELECT e.* " +
                     "FROM eco_news e " +
                     "LEFT JOIN eco_news_users_likes l ON e.id = l.eco_news_id " +
-                    "WHERE e.creation_date >= NOW() - INTERVAL '1 DAY' " +
+                    "WHERE e.creation_date >= NOW() - INTERVAL '1' DAY " +
                     "GROUP BY e.id " +
                     "ORDER BY COUNT(l.users_id) DESC " +
                     "LIMIT 5")

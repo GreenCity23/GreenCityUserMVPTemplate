@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Arthur Mkrtchian
+ */
 @Service
 public class EcoNewsServiceImpl implements EcoNewsService{
 
@@ -24,4 +27,5 @@ public class EcoNewsServiceImpl implements EcoNewsService{
         return ecoNewsRepo.getLastFiveInterestingEcoNews().stream().map(mapper::convert)
                 .collect(Collectors.toList());
     }
+
 }

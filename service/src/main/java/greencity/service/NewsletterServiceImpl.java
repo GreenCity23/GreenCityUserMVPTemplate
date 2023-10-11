@@ -23,12 +23,16 @@ public class NewsletterServiceImpl implements NewsletterService {
         this.newsSubscriberService = newsSubscriberService;
     }
 
-    // @Scheduled(cron = "0 0 10 * * ?")
-    @Scheduled(cron = "0 30 23 * * ?")
+    @Scheduled(cron = "0 15 18 * * ?")
     @Override
     public void sendLatestNewsToSubscribers() {
         List<NewsSubscriberResponseDto> subscribers = newsSubscriberService.getAllSubscribers();
         List<EcoNewsDto> ecoNewsList = ecoNewsService.getLastFiveInterestingEcoNews();
         emailService.sendNewNewsForSubscriber(subscribers, ecoNewsList);
+    }
+
+    @Scheduled(cron = "0 0 3 ? * MON")
+    public void deleteNewsSubscriberTable() {
+        newsSubscriberService.deleteNotConfirmedEmails();
     }
 }
